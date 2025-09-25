@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 require('dotenv').config();
@@ -13,6 +14,7 @@ const setupAssociations = require('./config/associations');
 const authRoutes = require('./routes/auth');
 const usersRoutes = require('./routes/users');
 const rolesRoutes = require('./routes/roles');
+const uploadRoutes = require('./routes/upload');
 
 // CRIAR APP EXPRESS PRIMEIRO
 const app = express();
@@ -106,6 +108,15 @@ app.use('/api/orcamentos', orcamentosRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/users', usersRoutes);
 app.use('/api/roles', rolesRoutes);
+app.use('/api/upload', uploadRoutes);
+// Servir arquivos estáticos
+// app.use('/uploads', express.static('uploads'));
+
+app.use('/uploads', (req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');   // <— importante
+res.header('Cross-Origin-Resource-Policy', 'cross-origin'); // <— para <img>
+next();
+}, express.static(path.join(__dirname, 'uploads')));
 
 // Rota de health check
 app.get('/api/health', (req, res) => {

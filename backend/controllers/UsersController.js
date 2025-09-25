@@ -111,6 +111,7 @@ class UsersController {
                 ...user.getSafeData(),
                 roles: user.roles || []
     }));
+        console.log('🔍 Primeiro usuário formatado:', formattedUsers[0]); // Debug
 
         res.json({
             success: true,
@@ -210,7 +211,7 @@ class UsersController {
             });
         }
 
-        const { name, email, password, status = 'active', role_ids = [] } = req.body;
+        const { name, email, password, avatar, status = 'active', role_ids = [] } = req.body;
 
         // Verificar se email já existe
         const existingUser = await User.findOne({ where: { email } });
@@ -226,6 +227,7 @@ class UsersController {
             name,
             email,
             password,
+            avatar,
             status
         });
 
@@ -287,8 +289,11 @@ class UsersController {
     // Atualizar usuário
     static async update(req, res) {
     try {
+        console.log('🔍 Body recebido:', req.body);
+
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
+            console.log('❌ Erros de validação:', errors.array());
             return res.status(400).json({
                 success: false,
                 message: 'Dados inválidos',
@@ -297,7 +302,9 @@ class UsersController {
         }
 
         const { id } = req.params;
-        const { name, email, password, status, role_ids } = req.body;
+        const { name, email, password, avatar, status, role_ids } = req.body;
+
+        console.log('🔍 Dados extraídos:', { name, email, avatar, status });
 
         const user = await User.findByPk(id);
         if (!user) {
@@ -306,6 +313,8 @@ class UsersController {
                 message: 'Usuário não encontrado'
             });
         }
+
+        console.log('✅ Usuário encontrado:', user.name);
 
         // Verificar se email já existe (em outro usuário)
         if (email && email !== user.email) {
@@ -329,6 +338,7 @@ class UsersController {
         if (name !== undefined) updateData.name = name;
         if (email !== undefined) updateData.email = email;
         if (password !== undefined) updateData.password = password;
+        if (avatar !== undefined) updateData.avatar = avatar;
         if (status !== undefined) updateData.status = status;
 
         await user.update(updateData);
