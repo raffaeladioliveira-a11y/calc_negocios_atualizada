@@ -8,6 +8,8 @@ require('dotenv').config();
 const { sequelize, testConnection } = require('./config/database');
 const clientesRoutes = require('./routes/clientes');
 const calcValoresRoutes = require('./routes/calcValores');
+const orcamentosRoutes = require('./routes/orcamentos');
+const setupAssociations = require('./config/associations');
 
 // CRIAR APP EXPRESS PRIMEIRO
 const app = express();
@@ -97,6 +99,7 @@ if (process.env.NODE_ENV === 'development') {
 // Rotas
 app.use('/api/clientes', clientesRoutes);
 app.use('/api/calc-valores', calcValoresRoutes);
+app.use('/api/orcamentos', orcamentosRoutes);
 
 // Rota de health check
 app.get('/api/health', (req, res) => {
