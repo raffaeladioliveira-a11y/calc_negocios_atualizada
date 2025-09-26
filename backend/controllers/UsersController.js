@@ -111,7 +111,6 @@ class UsersController {
                 ...user.getSafeData(),
                 roles: user.roles || []
     }));
-        console.log('🔍 Primeiro usuário formatado:', formattedUsers[0]); // Debug
 
         res.json({
             success: true,
@@ -127,7 +126,6 @@ class UsersController {
         });
 
     } catch (error) {
-        console.error('Erro ao listar usuários:', error);
         res.status(500).json({
             success: false,
             message: 'Erro interno do servidor'
@@ -191,7 +189,6 @@ class UsersController {
     });
 
     } catch (error) {
-        console.error('Erro ao buscar usuário:', error);
         res.status(500).json({
             success: false,
             message: 'Erro interno do servidor'
@@ -278,7 +275,6 @@ class UsersController {
     });
 
     } catch (error) {
-        console.error('Erro ao criar usuário:', error);
         res.status(500).json({
             success: false,
             message: 'Erro interno do servidor'
@@ -289,11 +285,8 @@ class UsersController {
     // Atualizar usuário
     static async update(req, res) {
     try {
-        console.log('🔍 Body recebido:', req.body);
-
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            console.log('❌ Erros de validação:', errors.array());
             return res.status(400).json({
                 success: false,
                 message: 'Dados inválidos',
@@ -304,8 +297,6 @@ class UsersController {
         const { id } = req.params;
         const { name, email, password, avatar, status, role_ids } = req.body;
 
-        console.log('🔍 Dados extraídos:', { name, email, avatar, status });
-
         const user = await User.findByPk(id);
         if (!user) {
             return res.status(404).json({
@@ -313,8 +304,6 @@ class UsersController {
                 message: 'Usuário não encontrado'
             });
         }
-
-        console.log('✅ Usuário encontrado:', user.name);
 
         // Verificar se email já existe (em outro usuário)
         if (email && email !== user.email) {

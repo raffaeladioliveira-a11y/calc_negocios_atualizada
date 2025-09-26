@@ -246,22 +246,78 @@ static async logout(req, res) {
 // Verificar token
 static async verifyToken(req, res) {
     try {
-        // Se chegou até aqui, o token é válido (middleware de auth já validou)
-        res.json({
+        console.log('🔍 Verificando token para usuário ID:', req.user.id);
+
+        const user = await User.findByPk(req.user.id, {
+            attributes: ['id', 'name', 'email', 'avatar', 'status'],
+            include: [
+                {
+                    model: Role,
+                    as: 'roles',
+                    attributes: ['id', 'name', 'display_name', 'color'],
+                    through: { attributes: [] },
+                    include: [
+                        {
+                            model: Permission,
+                            as: 'permissions',
+                            attributes: ['id', 'name', 'display_name', 'description', 'group'],
+                            through: { attributes: [] }
+                        }
+                    ]
+                }
+            ]
+        });
+
+        // LOGS DETALHADOS:
+        console.log('👤 Usuário encontrado:', !!user);
+        console.log('🎭 Quantidade de roles:', user?.roles?.length || 0);
+
+        if (user?.roles) {
+            user.roles.forEach((role, index) => {
+                console.log(`🎭 Role ${index}:`, role.name);
+            console.log(`🔑 Permissões do role ${role.name}:`, role.permissions?.length || 0);
+            if (role.permissions) {
+                role.permissions.forEach(perm => {
+                    console.log(`  - ${perm.name}`);
+            });
+            }
+        });
+        }
+
+        const responseData = {
             success: true,
             message: 'Token válido',
             data: {
-                user: req.user
-            }
-        });
+                user: {
+                    id: user.id,
+                    name: user.name,
+                    email: user.email,
+                    avatar: user.avatar,
+                    status: user.status,
+                    roles: user.roles?.map(role => ({
+                    id: role.id,
+                    name: role.name,
+                    display_name: role.display_name,
+                    color: role.color,
+                    permissions: role.permissions || []
+                })) || []
+    }
+    }
+    };
+
+        console.log('📤 Dados sendo enviados:', JSON.stringify(responseData, null, 2));
+
+        res.json(responseData);
     } catch (error) {
-        console.error('Erro na verificação do token:', error);
+        console.error('❌ Erro na verificação do token:', error);
         res.status(500).json({
             success: false,
             message: 'Erro interno do servidor'
         });
     }
 }
+
+
 
 // Alterar senha
 static async changePassword(req, res) {

@@ -8,6 +8,7 @@ const { requirePermission } = require('../middleware/permission');
 
 const router = express.Router();
 
+
 // Todas as rotas requerem autenticação
 router.use(authMiddleware);
 
@@ -19,14 +20,14 @@ router.get('/permissions',
 
 // GET /api/roles - Listar roles
 router.get('/',
-    requirePermission('roles.browse'),
-    RolesController.index
+requirePermission('roles.browse'),
+    RolesController.getAll
 );
 
 // GET /api/roles/:id - Buscar role específica
 router.get('/:id',
     requirePermission('roles.read'),
-    RolesController.show
+    RolesController.getById
 );
 
 // POST /api/roles - Criar role

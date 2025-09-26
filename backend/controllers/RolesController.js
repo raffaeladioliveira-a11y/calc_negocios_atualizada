@@ -31,7 +31,7 @@ class RolesController {
     ];
 
     // Listar roles
-    static async index(req, res) {
+    static async getAll(req, res) {
     try {
         const {
             page = 1,
@@ -44,7 +44,6 @@ class RolesController {
 
         // Construir filtros
         const where = {};
-
         if (search) {
             where[Op.or] = [
                 { name: { [Op.like]: `%${search}%` } },
@@ -59,16 +58,12 @@ class RolesController {
             include.push({
                 model: Permission,
                 as: 'permissions',
-                attributes: ['id', 'name', 'display_name', 'resource', 'action', 'group']
+                attributes: ['id', 'name', 'display_name', 'module'] // Mudei 'group' para 'module'
             });
         }
 
-        // Sempre incluir contagem de usuários
-        include.push({
-            model: User,
-            as: 'users',
-            attributes: []
-        });
+        // REMOVER O INCLUDE DE USERS QUE ESTÁ CAUSANDO O PROBLEMA
+        // Fazer a contagem de usuários separadamente
 
         const { count, rows: roles } = await Role.findAndCountAll({
             where,
@@ -76,45 +71,53 @@ class RolesController {
             offset,
             limit: parseInt(limit),
             order: [['created_at', 'DESC']],
-            distinct: true,
-            attributes: {
-                include: [
-                    [
-                        Role.sequelize.fn('COUNT', Role.sequelize.fn('DISTINCT', Role.sequelize.col('users.id'))),
-                        'user_count'
-                    ]
-                ]
-            },
-            group: ['Role.id'],
-            subQuery: false
+            distinct: true
+            // REMOVER: attributes, group, subQuery
         });
+
+        // Fazer contagem de usuários separadamente para cada role
+        const rolesWithCounts = await Promise.all(roles.map(async (role) => {
+                const userCount = await User.count({
+                include: [{
+                    model: Role,
+                    as: 'roles',
+                    where: { id: role.id }
+                }]
+            });
+
+        const permissionCount = await RolePermission.count({
+            where: { role_id: role.id }
+        });
+
+        return {
+            id: role.id,
+            name: role.name,
+            display_name: role.display_name,
+            description: role.description,
+            color: role.color,
+            is_system: role.is_system,
+            users_count: userCount, // Nome que o frontend espera
+            permissions_count: permissionCount,
+            created_at: role.created_at,
+            updated_at: role.updated_at,
+            permissions: role.permissions || []
+        };
+    }));
 
         res.json({
             success: true,
             data: {
-                roles: roles.map(role => ({
-                    id: role.id,
-                    name: role.name,
-                    display_name: role.display_name,
-                    description: role.description,
-                    color: role.color,
-                    is_system: role.is_system,
-                    user_count: parseInt(role.getDataValue('user_count')) || 0,
-                    permissions: role.permissions || [],
-                    created_at: role.created_at,
-                    updated_at: role.updated_at
-                })),
-            pagination: {
-            page: parseInt(page),
-                limit: parseInt(limit),
-                total: count.length || 0,
-                pages: Math.ceil((count.length || 0) / parseInt(limit))
-        }
-    }
-    });
+                roles: rolesWithCounts,
+                pagination: {
+                    current_page: parseInt(page),
+                    total_pages: Math.ceil(count / parseInt(limit)),
+                    total_items: count,
+                    items_per_page: parseInt(limit)
+                }
+            }
+        });
 
     } catch (error) {
-        console.error('Erro ao listar roles:', error);
         res.status(500).json({
             success: false,
             message: 'Erro interno do servidor'
@@ -123,7 +126,7 @@ class RolesController {
 }
 
     // Buscar role por ID
-    static async show(req, res) {
+    static async getById(req, res) {
     try {
         const { id } = req.params;
 
@@ -133,11 +136,6 @@ class RolesController {
                     model: Permission,
                     as: 'permissions',
                     attributes: ['id', 'name', 'display_name', 'resource', 'action', 'group', 'order']
-                },
-                {
-                    model: User,
-                    as: 'users',
-                    attributes: ['id', 'name', 'email', 'status']
                 }
             ]
         });
@@ -152,24 +150,19 @@ class RolesController {
         res.json({
             success: true,
             data: {
-                role: {
-                    id: role.id,
-                    name: role.name,
-                    display_name: role.display_name,
-                    description: role.description,
-                    color: role.color,
-                    is_system: role.is_system,
-                    permissions: role.permissions || [],
-                    users: role.users || [],
-                    user_count: (role.users || []).length,
-                    created_at: role.created_at,
-                    updated_at: role.updated_at
-                }
+                id: role.id,
+                name: role.name,
+                display_name: role.display_name,
+                description: role.description,
+                color: role.color,
+                is_system: role.is_system,
+                permissions: role.permissions || [],
+                created_at: role.created_at,
+                updated_at: role.updated_at
             }
         });
 
     } catch (error) {
-        console.error('Erro ao buscar role:', error);
         res.status(500).json({
             success: false,
             message: 'Erro interno do servidor'
@@ -274,7 +267,6 @@ class RolesController {
         });
 
     } catch (error) {
-        console.error('Erro ao criar role:', error);
         res.status(500).json({
             success: false,
             message: 'Erro interno do servidor'
@@ -397,7 +389,6 @@ class RolesController {
         });
 
     } catch (error) {
-        console.error('Erro ao atualizar role:', error);
         res.status(500).json({
             success: false,
             message: 'Erro interno do servidor'
@@ -450,7 +441,6 @@ class RolesController {
         });
 
     } catch (error) {
-        console.error('Erro ao excluir role:', error);
         res.status(500).json({
             success: false,
             message: 'Erro interno do servidor'
@@ -501,7 +491,6 @@ class RolesController {
     });
 
     } catch (error) {
-        console.error('Erro ao listar permissões:', error);
         res.status(500).json({
             success: false,
             message: 'Erro interno do servidor'
