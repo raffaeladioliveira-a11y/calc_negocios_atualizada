@@ -41,6 +41,7 @@ return true;
 
 // Login
 static async login(req, res) {
+    console.log('🚀 Login iniciado para:', req.body.email);
     try {
         // Verificar erros de validação
         const errors = validationResult(req);

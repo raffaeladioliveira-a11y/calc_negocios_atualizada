@@ -1,0 +1,23 @@
+# IDE files
+.idea/
+
+# Upload files
+backend/uploads/
+
+# Backup folders
+backup*/
+
+# Node modules
+node_modules/
+*/node_modules/
+
+# Build files
+dist/
+build/
+
+# Cache
+.vite/
+*/cache/
+
+# Recovery files
+photorec.*
