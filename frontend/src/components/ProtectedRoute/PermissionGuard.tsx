@@ -29,8 +29,15 @@ const PermissionGuard: React.FC<PermissionGuardProps> = ({
         hasPermission,
         hasRole,
         hasAnyPermission,
-        hasAllPermissions
+        hasAllPermissions,
+        user,
+        isLoading
     } = useAuth();
+
+    if (isLoading) {
+        console.log('⏳ Ainda carregando...');
+        return <div>Carregando...</div>;
+    }
 
     // Verificar permissão única
     if (permission && !hasPermission(permission)) {

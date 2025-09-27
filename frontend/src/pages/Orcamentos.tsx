@@ -119,15 +119,6 @@ export default function OrcamentosPage() {
     search: searchTerm || undefined
   });
 
-  // Log para debug - remover depois
-  console.log('🔍 Debug useOrcamentos:', {
-    orcamentos,
-    meta,
-    summary,
-    loading: isLoading,
-    error,
-    orcamentosLength: orcamentos?.length
-});
 
   // Estatísticas - usando summary do hook ou valores padrão
   const stats = {
@@ -467,16 +458,6 @@ export default function OrcamentosPage() {
           </CardContent>
         </Card>
 
-        {/* Debug Info - Remover em produção */}
-        <Card className="glass-card border-glass-border bg-yellow-50">
-          <CardContent className="p-4">
-            <p className="text-sm">
-              <strong>Debug:</strong> {filteredOrcamentos.length} orçamentos carregados |
-            Loading: {isLoading ? 'Sim' : 'Não'} |
-            Error: {error || 'Nenhum'}
-            </p>
-          </CardContent>
-        </Card>
 
         {/* Lista de Orçamentos */}
         {viewMode === 'cards' ? (

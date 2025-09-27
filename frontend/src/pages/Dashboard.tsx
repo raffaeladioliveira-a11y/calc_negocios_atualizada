@@ -27,11 +27,6 @@ export default function Dashboard() {
     queryFn: orcamentosApi.getAll,
   });
 
-  console.log('clientes data:', clientes);
-  console.log('orcamentos data:', orcamentos);
-  console.log('clientes type:', typeof clientes, 'is array:', Array.isArray(clientes));
-  console.log('orcamentos type:', typeof orcamentos, 'is array:', Array.isArray(orcamentos));
-
   // Calculate recent activity
   const recentClientes = Array.isArray(clientes) ? clientes.slice(0, 5) : [];
   const recentOrcamentos = Array.isArray(orcamentos?.orcamentos) ? orcamentos.orcamentos.slice(0, 5) : [];

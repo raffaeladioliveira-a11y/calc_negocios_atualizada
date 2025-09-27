@@ -8,7 +8,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { useConfiguracoes, useClientes } from "@/hooks/useCalcValores";
+import { useConfiguracoes } from "@/hooks/useCalcValores";
+import { useClientesQuery } from "@/hooks/useClientesQuery";
 import { useOrcamentos } from "@/hooks/useOrcamentos";
 
 interface Cliente {
@@ -71,7 +72,10 @@ export default function Calculadora() {
     // TODOS OS HOOKS DEVEM VIR PRIMEIRO - SEMPRE NA MESMA ORDEM
     const { toast } = useToast();
     const { data: configuracoes, isLoading: loadingConfig } = useConfiguracoes();
-    const { data: clientes, isLoading: loadingClientes } = useClientes();
+    const { clientes, loading: loadingClientes } = useClientesQuery({
+        search: '',
+        status: 'ativo'
+    });
     const { createOrcamento } = useOrcamentos();
 
     // TODOS OS ESTADOS
@@ -467,7 +471,7 @@ export default function Calculadora() {
                                         <SelectContent className="glass-card border-glass-border">
                                             {clientes?.map((cliente) => (
                                             <SelectItem key={cliente.id} value={cliente.id}>
-                                                {cliente.nome} - {formatarMoeda(cliente.valor)}/h
+                                                {cliente.name} - {formatarMoeda(cliente.valor)}/h
                                             </SelectItem>
                                             ))}
                                         </SelectContent>

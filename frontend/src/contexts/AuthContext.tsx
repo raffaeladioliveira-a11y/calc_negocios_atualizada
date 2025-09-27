@@ -51,12 +51,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const permissionsMap = new Map<number, Permission>();
 
         roles.forEach(role => {
+
             role.permissions?.forEach(permission => {
                 permissionsMap.set(permission.id, permission);
             });
         });
 
-        return Array.from(permissionsMap.values());
+        const result = Array.from(permissionsMap.values());
+        return result;
     };
 
     const login = async (email: string, password: string): Promise<boolean> => {
@@ -76,12 +78,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             if (response.ok && data.success) {
                 localStorage.setItem('auth_token', data.data.token);
 
-                // Consolidar permissões
-                const consolidatedPermissions = consolidatePermissions(data.data.user.roles || []);
-
+                // MUDAR AQUI: Usar permissões diretas do usuário se existirem
                 const userData = {
                     ...data.data.user,
-                    permissions: consolidatedPermissions
+                    permissions: data.data.user.permissions || consolidatePermissions(data.data.user.roles || [])
                 };
 
                 setUser(userData);
@@ -99,6 +99,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     const logout = () => {
         localStorage.removeItem('auth_token');
+        localStorage.removeItem('user');
         setUser(null);
     };
 
@@ -106,10 +107,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const token = localStorage.getItem('auth_token');
 
         if (!token) {
+            console.log('❌ Sem token no localStorage');
             setIsLoading(false);
             return;
         }
-
         try {
             const response = await fetch('/api/auth/verify', {
                 method: 'POST',
@@ -122,21 +123,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             const data = await response.json();
 
             if (response.ok && data.success) {
-                // Consolidar permissões
-                const consolidatedPermissions = consolidatePermissions(data.data.user.roles || []);
-
                 const userData = {
                     ...data.data.user,
-                    permissions: consolidatedPermissions
+                    permissions: data.data.user.permissions || consolidatePermissions(data.data.user.roles || [])
                 };
 
                 setUser(userData);
+
             } else {
                 localStorage.removeItem('auth_token');
                 setUser(null);
             }
         } catch (error) {
-            console.error('Erro ao verificar token:', error);
+            console.error('❌ Erro ao verificar token:', error);
             localStorage.removeItem('auth_token');
             setUser(null);
         } finally {
@@ -144,9 +143,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
     };
 
-    // Verificar se usuário tem uma permissão específica
     const hasPermission = (permission: string): boolean => {
-        if (!user || !user.permissions) return false;
+
+        if (!user || !user.permissions) {
+            return false;
+        }
         const result = user.permissions.some(p => p.name === permission);
         return result;
     };

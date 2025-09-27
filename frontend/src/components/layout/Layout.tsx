@@ -20,7 +20,7 @@ export function Layout({ children, title, onSearch }: LayoutProps) {
             <Header title={title} onSearch={onSearch} />
 
             <main className="flex-1 overflow-auto">
-              <div className="container p-6">
+              <div className="p-6 ml-64">
                 {children || <Outlet />} {/* Usar Outlet quando não há children */}
               </div>
             </main>

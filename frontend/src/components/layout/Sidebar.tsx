@@ -7,6 +7,7 @@ import {
     Headset,
     HandCoins,
     KeyRound,
+    UserCog,
     Calculator,
     FileText,
     Settings,
@@ -88,6 +89,13 @@ const adminNavigation = [
     name: "Papéis",
     href: "/admin/roles",
     icon: KeyRound,
+    permission: "roles.browse"
+  },
+
+  {
+    name: "Permissões",
+    href: "/admin/permissions",
+    icon: UserCog,
     permission: "roles.browse"
   }
 ];
@@ -189,29 +197,29 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
             </PermissionGuard>
           </nav>
 
-          {/* User section */}
-          <div className="p-4 border-t border-glass-border">
-            <div className="glass-card p-4 rounded-lg">
-              <div className="flex items-center space-x-3 mb-3">
-                <div className="w-10 h-10 gradient-primary rounded-full flex items-center justify-center">
-                  <Users className="w-5 h-5 text-primary-foreground" />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <p className="font-medium truncate">{user?.name || 'Usuário'}</p>
-                  <p className="text-sm text-muted-foreground truncate">
-                    {user?.email || 'usuario@calcnegocios.com'}
-                  </p>
-                </div>
-              </div>
-              <button
-                  onClick={handleLogout}
-                  className="w-full flex items-center justify-center space-x-2 glass-button px-4 py-2 rounded-lg hover:shadow-glass transition-shadow"
-              >
-                <LogOut className="w-4 h-4" />
-                <span>Sair</span>
-              </button>
-            </div>
-          </div>
+          {/*/!* User section *!/*/}
+          {/*<div className="p-4 border-t border-glass-border">*/}
+            {/*<div className="glass-card p-4 rounded-lg">*/}
+              {/*<div className="flex items-center space-x-3 mb-3">*/}
+                {/*<div className="w-10 h-10 gradient-primary rounded-full flex items-center justify-center">*/}
+                  {/*<Users className="w-5 h-5 text-primary-foreground" />*/}
+                {/*</div>*/}
+                {/*<div className="min-w-0 flex-1">*/}
+                  {/*<p className="font-medium truncate">{user?.name || 'Usuário'}</p>*/}
+                  {/*<p className="text-sm text-muted-foreground truncate">*/}
+                    {/*{user?.email || 'usuario@calcnegocios.com'}*/}
+                  {/*</p>*/}
+                {/*</div>*/}
+              {/*</div>*/}
+              {/*<button*/}
+                  {/*onClick={handleLogout}*/}
+                  {/*className="w-full flex items-center justify-center space-x-2 glass-button px-4 py-2 rounded-lg hover:shadow-glass transition-shadow"*/}
+              {/*>*/}
+                {/*<LogOut className="w-4 h-4" />*/}
+                {/*<span>Sair</span>*/}
+              {/*</button>*/}
+            {/*</div>*/}
+          {/*</div>*/}
         </div>
       </aside>
       </>

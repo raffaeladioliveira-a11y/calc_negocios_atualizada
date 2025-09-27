@@ -41,7 +41,6 @@ return true;
 
 // Login
 static async login(req, res) {
-    console.log('🚀 Login iniciado para:', req.body.email);
     try {
         // Verificar erros de validação
         const errors = validationResult(req);
@@ -122,6 +121,21 @@ static async login(req, res) {
         }
     });
     });
+
+        const userData = {
+                id: user.id,
+                name: user.name,
+                email: user.email,
+                avatar: user.avatar,
+                status: user.status,
+                roles: user.roles?.map(role => ({
+                id: role.id,
+                name: role.name,
+                display_name: role.display_name,
+                color: role.color
+            })) || [],
+            permissions: userPermissions // ADICIONAR ESTA LINHA
+    };
 
         // Atualizar último login
         await user.update({ last_login: new Date() });
@@ -247,8 +261,6 @@ static async logout(req, res) {
 // Verificar token
 static async verifyToken(req, res) {
     try {
-        console.log('🔍 Verificando token para usuário ID:', req.user.id);
-
         const user = await User.findByPk(req.user.id, {
             attributes: ['id', 'name', 'email', 'avatar', 'status'],
             include: [
@@ -269,17 +281,12 @@ static async verifyToken(req, res) {
             ]
         });
 
-        // LOGS DETALHADOS:
-        console.log('👤 Usuário encontrado:', !!user);
-        console.log('🎭 Quantidade de roles:', user?.roles?.length || 0);
 
         if (user?.roles) {
             user.roles.forEach((role, index) => {
-                console.log(`🎭 Role ${index}:`, role.name);
-            console.log(`🔑 Permissões do role ${role.name}:`, role.permissions?.length || 0);
+
             if (role.permissions) {
                 role.permissions.forEach(perm => {
-                    console.log(`  - ${perm.name}`);
             });
             }
         });
@@ -305,8 +312,6 @@ static async verifyToken(req, res) {
     }
     }
     };
-
-        console.log('📤 Dados sendo enviados:', JSON.stringify(responseData, null, 2));
 
         res.json(responseData);
     } catch (error) {

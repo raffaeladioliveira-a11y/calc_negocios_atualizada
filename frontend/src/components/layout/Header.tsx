@@ -1,4 +1,4 @@
-import { Bell, Search, User } from "lucide-react";
+import { Bell, Search, User, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { SidebarTrigger } from "@/components/ui/sidebar";
+import { useAuth } from '@/contexts/AuthContext';
 
 interface HeaderProps {
   title?: string;
@@ -22,10 +23,17 @@ export function Header({ title = "Dashboard", onSearch }: HeaderProps) {
     onSearch?.(e.target.value);
   };
 
+  const { logout, user } = useAuth();
+
+  const handleLogout = () => {
+    logout();
+  };
+
   return (
     <header className="sticky top-0 z-40 w-full border-b border-border/30 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/90">
-      <div className="container flex h-16 items-center justify-between px-6">
-        {/* Left side - Sidebar trigger and title */}
+      <div className="flex h-16 items-center justify-between px-6 ml-64">
+
+      {/* Left side - Sidebar trigger and title */}
         <div className="flex items-center gap-4">
           <SidebarTrigger />
           <div>
@@ -87,7 +95,13 @@ export function Header({ title = "Dashboard", onSearch }: HeaderProps) {
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem className="text-destructive">
-                Sair
+                <button
+                onClick={handleLogout}
+                className="w-full flex items-center justify-center space-x-2 glass-button px-4 py-2 rounded-lg hover:shadow-glass transition-shadow"
+                >
+                <LogOut className="w-4 h-4" />
+                <span>Sair</span>
+                </button>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

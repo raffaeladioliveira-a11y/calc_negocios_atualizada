@@ -156,12 +156,9 @@ export const useOrcamentos = (
 
             const result = await response.json();
 
-            // CORREÇÃO AQUI - A API retorna { success: true, data: { orcamentos: [...], pagination: {...} } }
-            console.log('🔍 Raw API Response:', result);
 
 // Extrair dados corretamente
             const apiData = result.data || result; // Pega o 'data' da resposta
-            console.log('🔍 API Data:', apiData);
 
             setOrcamentos(apiData.orcamentos || []);
             setMeta(apiData.pagination ? {
@@ -172,7 +169,6 @@ export const useOrcamentos = (
             } : null);
             setSummary(apiData.summary || null);
 
-            console.log('✅ Orçamentos processados:', apiData.orcamentos?.length || 0);
 
         } catch (err) {
             const errorMessage = err instanceof Error ? err.message : 'Erro desconhecido';
