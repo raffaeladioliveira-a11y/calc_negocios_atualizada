@@ -1,0 +1,177 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Dark theme inspired design */
+    --background: 222 15% 7%;
+    --foreground: 210 20% 95%;
+    --card: 222 15% 10%;
+    --card-foreground: 210 20% 95%;
+    --popover: 222 15% 10%;
+    --popover-foreground: 210 20% 95%;
+    
+    /* Purple primary (vibrant violet) */
+    --primary: 262 80% 65%;
+    --primary-foreground: 210 20% 98%;
+    
+    /* Dark secondary */
+    --secondary: 222 15% 15%;
+    --secondary-foreground: 210 15% 85%;
+    
+    /* Subtle muted */
+    --muted: 222 15% 12%;
+    --muted-foreground: 210 10% 60%;
+    
+    /* Success accent (emerald green) */
+    --accent: 158 70% 45%;
+    --accent-foreground: 210 20% 98%;
+    
+    /* Destructive */
+    --destructive: 0 70% 60%;
+    --destructive-foreground: 210 20% 98%;
+    
+    /* Borders and inputs - subtle gray */
+    --border: 222 15% 18%;
+    --input: 222 15% 18%;
+    --ring: 262 80% 65%;
+    
+    /* Sidebar colors */
+    --sidebar-background: 222 15% 8%;
+    --sidebar-foreground: 210 15% 85%;
+    --sidebar-primary: 262 80% 65%;
+    --sidebar-primary-foreground: 210 20% 98%;
+    --sidebar-accent: 222 15% 15%;
+    --sidebar-accent-foreground: 210 15% 85%;
+    --sidebar-border: 222 15% 18%;
+    --sidebar-ring: 262 80% 65%;
+    
+    --radius: 0.75rem;
+    
+    /* Modern gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(262 80% 65%), hsl(262 80% 55%));
+    --gradient-success: linear-gradient(135deg, hsl(158 70% 45%), hsl(158 70% 35%));
+    --gradient-card: linear-gradient(145deg, hsl(222 15% 10%), hsl(222 15% 12%));
+    
+    /* Shadows for dark theme */
+    --shadow-soft: 0 2px 8px -2px hsl(222 15% 5% / 0.3);
+    --shadow-medium: 0 4px 16px -4px hsl(222 15% 5% / 0.4);
+    --shadow-strong: 0 8px 32px -8px hsl(222 15% 5% / 0.5);
+    
+    /* Animations */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .light {
+    /* Light theme fallback (keeping dark as default) */
+    --background: 210 20% 98%;
+    --foreground: 222 15% 15%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 15% 15%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 15% 15%;
+    
+    --primary: 262 80% 55%;
+    --primary-foreground: 210 20% 98%;
+    
+    --secondary: 210 20% 95%;
+    --secondary-foreground: 262 80% 25%;
+    
+    --muted: 210 20% 96%;
+    --muted-foreground: 222 10% 45%;
+    
+    --accent: 158 70% 40%;
+    --accent-foreground: 210 20% 98%;
+    
+    --destructive: 0 70% 50%;
+    --destructive-foreground: 210 20% 98%;
+    
+    --border: 210 20% 88%;
+    --input: 210 20% 88%;
+    --ring: 262 80% 55%;
+    
+    --sidebar-background: 210 20% 98%;
+    --sidebar-foreground: 222 15% 25%;
+    --sidebar-primary: 262 80% 55%;
+    --sidebar-primary-foreground: 210 20% 98%;
+    --sidebar-accent: 210 20% 95%;
+    --sidebar-accent-foreground: 262 80% 25%;
+    --sidebar-border: 210 20% 88%;
+    --sidebar-ring: 262 80% 55%;
+    
+    --gradient-card: linear-gradient(145deg, hsl(0 0% 100%), hsl(210 20% 98%));
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+}
+
+@layer components {
+  /* Modern dark card styles */
+  .business-card {
+    @apply bg-card border border-border/50 shadow-sm hover:shadow-md transition-all duration-300 rounded-xl;
+  }
+  
+  /* Success indicator with emerald */
+  .success-indicator {
+    @apply text-accent bg-accent/10 border-accent/20;
+  }
+  
+  /* Modern hover effects */
+  .hover-lift {
+    @apply transition-all duration-300 hover:scale-[1.02] hover:shadow-md;
+  }
+  
+  /* Gradient backgrounds */
+  .gradient-primary {
+    background: var(--gradient-primary);
+  }
+  
+  .gradient-success {
+    background: var(--gradient-success);
+  }
+  
+  /* Smooth animations */
+  .fade-in {
+    animation: fadeIn 0.4s ease-out;
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  /* Modern metrics styling */
+  .metric-card {
+    @apply business-card p-6 hover-lift bg-gradient-to-br from-card to-card/95;
+  }
+  
+  .metric-value {
+    @apply text-3xl font-bold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent;
+  }
+  
+  .metric-label {
+    @apply text-sm text-muted-foreground font-medium;
+  }
+  
+  /* Status badges with better styling */
+  .status-active {
+    @apply bg-accent/20 text-accent border border-accent/30;
+  }
+  
+  .status-inactive {
+    @apply bg-muted text-muted-foreground border border-border;
+  }
+  
+  /* Avatar with gradient background */
+  .avatar-gradient {
+    @apply bg-gradient-to-br from-primary to-primary/80;
+  }
+}
